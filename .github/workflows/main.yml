@@ -1,31 +1,33 @@
-name: Build Desktop Executable
+name: Build Windows App
+
 on:
-  push:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  release:
+  build:
     runs-on: windows-latest
+
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 18
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install dependencies
+        run: |
+          cd desktop-app
+          npm install
 
-      - name: Compile and Build Web Code
-        run: npm run build
+      - name: Build Windows executable
+        run: |
+          cd desktop-app
+          npx electron-builder --win
 
-      - name: Package Windows App
-        run: npx electron-forge make
-
-      - name: Upload Installer Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer
-          path: out/make/squirrel/win32/x64/*.exe
+          name: Simple 4 Track
+          path: desktop-app/dist/*
