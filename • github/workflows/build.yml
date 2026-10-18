@@ -1,0 +1,28 @@
+name: Build Desktop Executable
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-size: 20
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Package Windows App
+        run: npm run electron:make
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: out/make/squirrel/win32/x64/*.exe
